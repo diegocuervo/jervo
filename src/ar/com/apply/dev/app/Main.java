@@ -6,7 +6,10 @@ import java.io.File;
 import com.essbase.api.base.EssException;
 import com.essbase.api.base.IEssBaseObject;
 import com.essbase.api.base.IEssIterator;
+import com.essbase.api.datasource.IEssCube;
+import com.essbase.api.datasource.IEssOlapApplication;
 import com.essbase.api.datasource.IEssOlapServer;
+import com.essbase.api.domain.IEssAppComponent;
 import com.essbase.api.domain.IEssDomain;
 import com.essbase.api.session.IEssbase;
 
@@ -74,6 +77,13 @@ public class Main {
 	        IEssOlapServer hapd =  dom.getOlapServer("hyperapd");
 	        hapd.connect();
 	        IEssIterator applist = hapd.getApplications();
+	        
+            for (int i=0; i < applist.getCount(); i++) {
+            	IEssOlapApplication group = (IEssOlapApplication)applist.getAt(i);
+                System.out.println("APP " + i + ": " + group.getName()  + "\n Cubos: " + group.getCountCubes() + "\n UsuariosConectados: " + group.getCountUsersConnected() + "\n Tipo: " + group.getType() + "\n Tipo Almacenamiento: " + group.getDataStorageType()+ "\n Tiempo: " + group.getElapsedAppTime() + "\n AppStatus: " + group.getAppLoadStatus().stringValue() + "\n Peso de Cubos: " + pesoCubos(group.getCubes()));
+                }
+	        
+	        
 
 	        String[] propNames = dom.getPropertyNames();
 	        IEssIterator oSrv = dom.getOlapServers();
@@ -90,6 +100,22 @@ public class Main {
 	        } catch (EssException e) {
 	        }
 	    }
+	}
+
+	private static int pesoCubos(IEssIterator cubes) {
+			int suma = 0;
+			try {
+				for (int i=0; i < cubes.getCount(); i++) {
+					IEssCube iec = (IEssCube)cubes.getAt(i);
+					suma += iec.getActualBlockSize() * iec.getTotalBlocks();
+				}
+			} catch (EssException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		return suma;
+		
 	}
 
 
