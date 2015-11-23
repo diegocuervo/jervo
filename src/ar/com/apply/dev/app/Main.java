@@ -72,11 +72,13 @@ public class Main {
 	        int b = dom.getCountOlapServers();
 	        int c = dom.getCountEnterpriseServers();
 	        IEssOlapServer hapd =  dom.getOlapServer("hyperapd");
+	        hapd.connect();
+	        IEssIterator applist = hapd.getApplications();
 
 	        String[] propNames = dom.getPropertyNames();
 	        IEssIterator oSrv = dom.getOlapServers();
 	        IEssBaseObject[] connectionInfoObjects = apps.getAll();
-	        System.out.println("Connection count: {}" + connectionInfoObjects.length);
+	        System.out.println("Application count: {}" + applist.getAll().length);
 	        return connectionInfoObjects.length;
 	    } catch (EssException e) {
 	    	System.out.println("Essbase error: {}" +  e.getMessage());
